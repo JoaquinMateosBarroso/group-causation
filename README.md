@@ -63,9 +63,11 @@ benchmark.report_results()
 
 ## Benchmarking
 The benchmarking framework allows for easy comparison of different causal discovery methods. It includes:
-- Standardized datasets
-- Automated hyperparameter tuning
-- Reproducible evaluation protocols
+- Generation of synthetic datasets based on time series directed acyclic graphs
+- Test of algorithms in both static and dynamic hyperparameters conditions
+- Plotting of results in atractive graphs
+![image](https://github.com/user-attachments/assets/5fc44e5a-6488-4454-854d-e5737a290426)
+
 
 ## Contributing
 Contributions are welcome! If you want to contribute:
@@ -79,10 +81,5 @@ This project is licensed under the MIT License.
 
 ## Contact
 For questions or collaborations, feel free to open an issue or contact us at [jmateosbarroso@gmail.com].
-
-
-
-
-
 
 
