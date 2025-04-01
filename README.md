@@ -2,7 +2,8 @@
 
 CausalDiscoveryTS is a Python library for causal discovery on time series and groups of time series. It provides tools for identifying causal relationships, automating benchmarks, and evaluating causal inference methods. The library is designed for researchers and practitioners in causal inference, machine learning, and time series analysis. Check the [docs](https://joaquinmateosbarroso.github.io/group-causation/) for more detailed information.
 
-![image](https://github.com/user-attachments/assets/acfe13b0-9209-4d8c-bd5d-4e29e2c0687e)
+![Untitled](https://github.com/user-attachments/assets/25aa8679-4185-4d1a-808e-5527c80a301d)
+
 
 ## Features
 - **Causal Discovery**: Implements various causal discovery algorithms tailored for time series and grouped time series.
