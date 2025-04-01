@@ -1,6 +1,6 @@
 # CausalDiscoveryTS
 
-CausalDiscoveryTS is a Python library for causal discovery on time series and groups of time series. It provides tools for identifying causal relationships, automating benchmarks, and evaluating causal inference methods. The library is designed for researchers and practitioners in causal inference, machine learning, and time series analysis. Check the [docs](https://joaquinmateosbarroso.github.io/group-causation/) for more detailed information.
+CausalDiscoveryTS is an open source Python library for causal discovery on time series and groups of time series. It provides tools for identifying causal relationships, automating benchmarks, and evaluating causal inference methods. The library is designed for researchers and practitioners in causal inference, machine learning, and time series analysis. Check the [docs](https://joaquinmateosbarroso.github.io/group-causation/) for more detailed information.
 
 ![Untitled](https://github.com/user-attachments/assets/25aa8679-4185-4d1a-808e-5527c80a301d)
 
@@ -20,8 +20,8 @@ pip install git+https://github.com/JoaquinMateosBarroso/group-causation
 
 Or install from source for development purposes:
 ```sh
-git clone https://github.com/yourusername/CausalDiscoveryTS.git
-cd CausalDiscoveryTS
+git clone https://github.com/JoaquinMateosBarroso/group-causation
+cd group-causation
 pip install -e .
 ```
 
@@ -30,22 +30,44 @@ pip install -e .
 ### Example: Running a Causal Discovery Algorithm
 
 ```python
-from causaldiscoveryts import CausalDiscovery
+import pandas as pd
+import matplotlib.pyplot as plt
+from group_causation.causal_discovery_algorithms import PCMCIWrapper
+from group_causation.create_toy_datasets import plot_ts_graph
 
-data = load_time_series_data("your_dataset.csv")
-model = CausalDiscovery(method="GrangerCausality")
-causal_graph = model.fit(data)
-model.plot_graph()
+data = pd.read_csv('your_dataset.csv').values
+pcmci = PCMCIWrapper(data)
+parents = pcmci.extract_parents()
+plot_ts_graph(parents)
+plt.show()
 ```
 
 ### Example: Running Benchmarks
 
 ```python
-from causaldiscoveryts import Benchmark
+from group_causation.benchmark import BenchmarkCausalDiscovery
+from group_causation.functions_test_data import static_parameters
+from group_causation.causal_discovery_algorithms import PCMCIWrapper, GrangerWrapper
 
-benchmark = Benchmark(methods=["PCMCI", "GrangerCausality"], datasets=["synthetic", "real"])
-benchmark.run()
-benchmark.report_results()
+algorithms = {'pcmci': PCMCIWrapper, 'granger': GrangerWrapper}
+dataset_options = {
+    'crosslinks_density': 0.5, # Portion of links that won't be in the kind of X_{t-1}->X_t; between 0 and 1
+    'T': 2000, # Number of time points in the dataset
+    'N_vars': 10, # Number of variables in the dataset
+    'confounders_density': 0.2, # Portion of dataset that will be overgenerated as confounders; between 0 and inf
+    'dependency_coeffs': [-0.3, 0.3], # default: [-0.5, 0.5]
+    'auto_coeffs': [0.5], # default: [0.5, 0.7]
+    'noise_dists': ['gaussian'], # deafult: ['gaussian']
+    'noise_sigmas': [0.3], # default: [0.5, 2]
+}    
+
+# default, static parameters
+parameters_iterator = static_parameters(dataset_options, {'pcmci': {}, 'granger': {}})
+
+benchmark = BenchmarkCausalDiscovery()
+benchmark.benchmark_causal_discovery(algorithms, parameters_iterator, generate_toy_data=True,
+                                     datasets_folder='toy_data', results_folder='results', verbose=1)
+benchmark.plot_particular_result('results')
 ```
 
 ## Supported Time Series Causal Discovery Methods
