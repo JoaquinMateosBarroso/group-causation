@@ -30,7 +30,7 @@ dependencies = [
     "statsmodels==0.13.4",
     "tigramite>=5.2",
     "pgmpy>=0.1.19",
-    "git+https://github.com/salesforce/causalai.git@v2.0",
+    "git+https://github.com/salesforce/causalai.git",
 ]
 
 [project.urls]
