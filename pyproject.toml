@@ -17,12 +17,20 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 dependencies = [
-    "numpy>=1.25",
+    "numpy>=1.24.3,<2.0",
+    "numba>=0.60.0",
+    "more_itertools>=10.1.0",
+    "tqdm>=4.65.0",
+    "dcor>=0.6",
+    "memory_profiler>=0.60.0",
     "scipy>=1.11.4",
     "pandas>=1.5.3",
+    "seaborn>=0.12.2",
     "lingam==1.5.5", # There are some issues with the latest version
     "statsmodels==0.13.4",
     "tigramite>=5.2",
+    "pgmpy>=0.1.19",
+    "git+https://github.com/salesforce/causalai.git@v2.0#egg=causalai",
 ]
 
 [project.urls]
