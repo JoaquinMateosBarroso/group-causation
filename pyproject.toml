@@ -23,6 +23,7 @@ dependencies = [
     "more_itertools>=10.1.0",
     "tqdm>=4.65.0",
     "dcor>=0.6",
+    "deap>=1.4.2",
     "memory_profiler>=0.60.0",
     "scipy>=1.11.4",
     "pandas>=1.5.3",
@@ -30,7 +31,7 @@ dependencies = [
     "lingam==1.5.5", # There are some issues with the latest version
     "statsmodels==0.13.4",
     "tigramite>=5.2",
-    "pgmpy>=0.1.19",
+    "pgmpy>=0.1.19,<1",
     "causalai @ git+https://github.com/salesforce/causalai.git@v2.0.0",
 ]
 
