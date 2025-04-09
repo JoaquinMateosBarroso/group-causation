@@ -126,12 +126,11 @@ class HybridGroupCausalDiscovery(GroupCausalDiscoveryBase):
             group_data = self.data[:, list(group)]
             group_data = (group_data - group_data.mean(axis=0))
             if np.all((std:=group_data.std(axis=0))!=0): group_data /= std
-            pca = PCA(n_components=explained_variance_threshold)
-            pca.fit(group_data)
             
             if groups_division_method == 'group_embedding':
                 # Extract the principal components of the group
-                group_data_pca = pca.transform(group_data)
+                pca = PCA(n_components=explained_variance_threshold)
+                group_data_pca = pca.fit_transform(group_data)
                 # Append the microgroup variables indexes to the list    
                 n_variables = group_data_pca.shape[1]
                 current_number_of_variables = sum(arr.shape[1] for arr in micro_data)
@@ -141,14 +140,7 @@ class HybridGroupCausalDiscovery(GroupCausalDiscoveryBase):
                 # Append the microgroup data to the list
                 micro_data.append(group_data_pca)
                 
-            elif groups_division_method == 'subgroups':
-                def get_pc1explained_variance_and_group_data(data: np.ndarray) -> tuple[np.ndarray, float]:
-                    if np.allclose(data.std(axis=0), 0):
-                        return np.zeros((data.shape[0], 1)), 0.0
-                    pca = PCA(n_components=1)
-                    data_pca = pca.fit_transform(data)
-                    return data_pca, pca.explained_variance_ratio_[0]
-                
+            elif groups_division_method == 'subgroups':                
                 # Divide the group in 2 subgroups until the explained variance of the first PC represents
                 # at least a "explained_variance_threshold" fraction of the total
                 def _divide_subgroups(current_subgroup: set[int]) -> tuple[ list[set[int]], np.ndarray]:
@@ -156,9 +148,12 @@ class HybridGroupCausalDiscovery(GroupCausalDiscoveryBase):
                     Recursive function that divides the group in 2 subgroups until the explained variance
                     of the first PC represents at least a "explained_variance_threshold" fraction of the total
                     '''
-                    group_data_pca, pc1explained_variance = get_pc1explained_variance_and_group_data(current_subgroup)
-                    
-                    if pc1explained_variance >= explained_variance_threshold or len(current_subgroup) == 1:
+                    current_subgroup_data = self.data[:, list(current_subgroup)]
+                    pca = PCA(n_components=1)
+                    print(f'{current_subgroup=}')
+                    print(f'{current_subgroup_data.std()=}')
+                    group_data_pca = pca.fit_transform(current_subgroup_data)
+                    if pca.explained_variance_ratio_[0] >= explained_variance_threshold or len(current_subgroup) == 1:
                         # We have reached the desired explained variance; one single pc is enough
                         nonlocal current_number_of_variables
                         used_subgroup = [current_number_of_variables]
