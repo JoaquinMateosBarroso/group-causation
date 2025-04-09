@@ -164,14 +164,13 @@ class HybridGroupCausalDiscovery(GroupCausalDiscoveryBase):
                         half = len(current_subgroup) // 2
                         first_half = ordered_nodes[:half]
                         second_half = ordered_nodes[half:]
-                        first_subgroup, first_subgroup_data = _divide_subgroups(first_half)
-                        second_subgroup, second_subgroup_data = _divide_subgroups(second_half)
+                        first_subgroup, first_subgroup_data = _divide_subgroups([current_subgroup[i] for i in first_half])
+                        second_subgroup, second_subgroup_data = _divide_subgroups([current_subgroup[i] for i in second_half])
                         return first_subgroup + second_subgroup, np.concatenate([first_subgroup_data, second_subgroup_data], axis=1)
                 
                 micro_group, group_data_pca = _divide_subgroups(group)
                 micro_groups.append( set(micro_group) )
                 micro_data.append(group_data_pca)
-            
             
             else:
                 raise ValueError(f'Invalid groups division method: {groups_division_method}')
