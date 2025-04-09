@@ -142,9 +142,15 @@ class HybridGroupCausalDiscovery(GroupCausalDiscoveryBase):
                 micro_data.append(group_data_pca)
                 
             elif groups_division_method == 'subgroups':
-                get_pc1explained_variance_and_group_data = lambda group: \
-                    ((pca:=PCA(n_components=1)).fit_transform(self.data[:, list(group)]),  
-                       pca.explained_variance_ratio_[0])
+                def get_pc1explained_variance_and_group_data(data: np.ndarray) -> tuple[np.ndarray, float]:
+                    if np.allclose(data.std(axis=0), 0):
+                        return np.zeros((data.shape[0], 1)), 0.0
+                    pca = PCA(n_components=1)
+                    data_pca = pca.fit_transform(data)
+                    return data_pca, pca.explained_variance_ratio_[0]
+                
+                # Divide the group in 2 subgroups until the explained variance of the first PC represents
+                # at least a "explained_variance_threshold" fraction of the total
                 def _divide_subgroups(current_subgroup: set[int]) -> tuple[ list[set[int]], np.ndarray]:
                     '''
                     Recursive function that divides the group in 2 subgroups until the explained variance
@@ -269,3 +275,5 @@ def _convert_link_assumptions(link_assumptions: dict[int, dict[tuple[int, int], 
                     micro_link_assumptions[son_node_idx][(parent_node_idx, lag)] = link_type
     
     return micro_link_assumptions
+
+
