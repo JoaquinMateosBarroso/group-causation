@@ -57,10 +57,12 @@ class PCMCIWrapper(CausalDiscoveryBase):
         
         :param data: np.array with the data, shape (n_samples, n_features)
         '''
+        print(f'{self.min_lag=}')
         results = self.pcmci.run_pcmciplus(tau_min=self.min_lag, tau_max=self.max_lag,
                                             pc_alpha=self.pc_alpha, **self.extra_args)
-        parents = self.pcmci.return_parents_dict(graph=results['graph'], val_matrix=results['val_matrix'])
-        
+        parents = self.pcmci.return_parents_dict(graph=results['graph'], 
+                                                 val_matrix=results['val_matrix'],
+                                                 include_lagzero_parents=True)
         return parents
 
 
