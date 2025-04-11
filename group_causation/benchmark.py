@@ -266,7 +266,7 @@ class BenchmarkBase(ABC):
             plt.close('all')
             
             # Plot the graph structure
-            plot_ts_graph(parents_dict)
+            plot_ts_graph(parents_dict, var_names=range(len(parents_dict)))
             plt.savefig(f'{folder_name}/{data_name}_graph.pdf')
             
             # Plot the summary graph structure
@@ -274,7 +274,7 @@ class BenchmarkBase(ABC):
             # Make the graph more beautiful by setting parents as past variables
             for son, parents in summary_parents.items():
                 summary_parents[son] = [(p, -1) for p in parents]
-            plot_ts_graph(summary_parents)
+            plot_ts_graph(summary_parents, var_names=range(len(summary_parents)))
             plt.savefig(f'{folder_name}/{data_name}_summary_graph.pdf')
             plt.clf()
             
@@ -290,15 +290,15 @@ class BenchmarkBase(ABC):
         # Plot the time series
         fig, axs = plt.subplots(n_variables, 1, figsize=(10, 3*n_variables))
         for i, variable_name in enumerate(dataset.columns):
-            axs[i].plot(time_series[:, i])
+            axs[i].plot(time_series[:, i], color='red')
             axs[i].set_title(f'Variable {i}')
             axs[i].set_xlabel('Time')
             axs[i].set_ylabel(f'$X^{{{i}}}$')
-            
-            
+            axs[i].grid()
+                        
             # Include the parents in the title
             parents = parents_dict.get(int(variable_name), [])
-            parents_str = ', '.join([f'$X^{{{p[0]}}}_{{{p[1]}}}$' for p in parents])
+            parents_str = ', '.join([f'$X^{{{p[0]}}}_{{t-{p[1]}}}$' for p in parents])
             axs[i].set_title(f'$X^{{{i}}}_t$ - Parents: {parents_str}')
         
         plt.subplots_adjust(hspace=0.5)
@@ -326,7 +326,7 @@ class BenchmarkBase(ABC):
                 y = [group[score].mean() for group in datasets_groups]
                 ax.errorbar(x, y, yerr=std, label=algorithm_name,
                              fmt='.-', linewidth=1, capsize=3)
-                ax.grid()
+                ax.grid(axis='y')
             ax.set_xlabel(x_axis)
             ax.set_ylabel(score)
             ax.legend()
@@ -368,7 +368,7 @@ class BenchmarkBase(ABC):
             all_results_df = pd.concat(all_results)
             sns.violinplot(x='algorithm', y=score, data=all_results_df,
                            hue='algorithm',ax=ax)
-            ax.grid()
+            ax.grid(axis='y')
             
             
             if score in ['f1', 'precision', 'recall', 
