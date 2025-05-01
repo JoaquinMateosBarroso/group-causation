@@ -24,13 +24,22 @@ def get_average_pc1_explained_variance(data: np.ndarray, groups: list[set[int]])
     
     return np.mean(explained_variances)
 
+def get_armonic_explained_variance(data: np.ndarray, groups: list[set[int]]) -> float:
+    '''
+    Get the average explained variance of the first principal component of the data
+    for each group.
+    '''
+    explained_variances = np.array([get_pc1_explained_variance(data[:, list(group)]) for group in groups])
+
+    return 1 / np.mean(1 / explained_variances) if np.all(explained_variances > 0) else 0
+
 def get_explainability_score(data: np.ndarray, groups: list[set[int]]) -> float:
     '''
     Get a score that represents how well the data can be explained by the groups.
     '''
     cleaned_groups = [group for group in groups if len(group) > 0]
     
-    explained_variance = get_average_pc1_explained_variance(data, cleaned_groups)
+    explained_variance = get_armonic_explained_variance(data, cleaned_groups)
     inverse_n_groups = 1 - len(cleaned_groups) / data.shape[1]
     
     geometric_mean = (explained_variance * inverse_n_groups) ** (1/2)
