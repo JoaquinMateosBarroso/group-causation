@@ -101,6 +101,9 @@ def _run_genetic_algorithm(n_variables, scores_getter: Callable, scores_weights:
     best_population = run_ga()
     best_individual = tools.selBest(best_population, k=1)[0]
     
+    # Delete empty groups from the list
+    best_individual = [group for group in best_individual if len(group) > 0]
+    
     return best_individual
 
 
